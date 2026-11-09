@@ -1,0 +1,85 @@
+function removeEntry(id){
+
+ if(confirm("Bu kaydı silmek istiyor musun?")){
+
+  entries=entries.filter(x=>x.id!==id);
+
+  save();
+
+ }
+
+}
+
+function escapeHTML(text){
+
+ return String(text).replace(/[&<>"']/g,function(c){
+
+  return {
+
+   "&":"&amp;",
+
+   "<":"&lt;",
+
+   ">":"&gt;",
+
+   '"':"&quot;",
+
+   "'":"&#39;"
+
+  }[c];
+
+ });
+
+}
+
+function render(){
+
+ const income=entries.filter(x=>x.type==="Gelir").reduce((a,x)=>a+x.amount,0);
+
+ const expense=entries.filter(x=>x.type==="Gider").reduce((a,x)=>a+x.amount,0);
+
+ document.getElementById("income").innerText=money(income);
+
+ document.getElementById("expense").innerText=money(expense);
+
+ document.getElementById("balance").innerText=money(income-expense);
+
+ const history=document.getElementById("history");
+
+ if(entries.length===0){
+
+  history.innerHTML="Henüz kayıt yok.";
+
+  return;
+
+ }
+
+ history.innerHTML=entries.slice().reverse().map(x=>`
+
+  <div class="item">
+
+   <strong>${escapeHTML(x.description)}</strong><br>
+
+   <span>${escapeHTML(x.date)}</span><br>
+
+   <span class="${x.type==="Gelir"?"green":"red"}">
+
+    ${x.type==="Gelir"?"+":"-"} ${money(x.amount)}
+
+   </span>
+
+   <button class="delete" onclick="removeEntry(${x.id})">KAYDI SİL</button>
+
+  </div>
+
+ `).join("");
+
+}
+
+render();
+
+</script>
+
+</body>
+
+</html>
